@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Captain's Edition · Unified Hypermetadynamic Overlay</title>
+  <style>
+    :root {
+      --bg: #07121f;
+      --bg-soft: #102238;
+      --card: #112c49;
+      --line: #355678;
+      --text: #e7f2ff;
+      --muted: #a6c3df;
+      --accent: #67d5ff;
+      --good: #7dffb3;
+      --warn: #ffd479;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background: linear-gradient(145deg, var(--bg), #060a14 60%);
+      line-height: 1.5;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 9;
+      background: rgba(8, 17, 30, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 22px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    nav a {
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.86rem;
+    }
+    .meter {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: var(--good);
+      border: 1px solid var(--good);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 70px;
+    }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(17, 44, 73, 0.38);
+      margin: 16px 0;
+      padding: 16px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(7, 18, 31, 0.58);
+    }
+    code {
+      color: var(--warn);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.91rem;
+    }
+    a.link {
+      color: #8de1ff;
+      text-decoration: underline;
+    }
+    .tooltip {
+      border-bottom: 1px dashed var(--accent);
+      cursor: help;
+    }
+    .kbd {
+      display: inline-block;
+      border: 1px solid #5f83a5;
+      border-radius: 6px;
+      padding: 1px 6px;
+      background: #0b1e31;
+      font-size: 0.8rem;
+    }
+    .autofill {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .autofill a {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 5px 8px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="#init">Init.0</a>
+      <a href="#core">Core</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#queues">Queues</a>
+      <a href="#agents">Agents</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#marketing">Marketing Docs</a>
+      <span class="meter">Ω Coherence: 0.947 stable</span>
+    </nav>
+  </header>
+
+  <main>
+    <section id="init">
+      <h1>Captain's Edition · Unified Hypermetadynamic Overlay</h1>
+      <p>
+        Studied first: <code>(+ | + | +) = 10800k + n(ToPhDark:CRED)</code> with two-variable control mode.
+        Variable <code>x</code> tracks mission context and <code>y</code> tracks response tempo.
+      </p>
+      <p>
+        This document merges proto systems into an operational desktop expression for
+        Mom's teamAET GSOC / AHJ / Drill Coordinator.
+      </p>
+    </section>
+
+    <section id="core">
+      <h2>Core Constants + Convergence</h2>
+      <div class="grid">
+        <div class="card"><strong title="State vector for response timing under uncertainty" class="tooltip">C1 · Time Resolve</strong><br/>Derivation: Δt → bounded adaptive response.</div>
+        <div class="card"><strong title="Cross-source confidence normalization" class="tooltip">C2 · Evidence Weight</strong><br/>Derivation: Σ(signal × trust).</div>
+        <div class="card"><strong title="Operational fit across platforms" class="tooltip">C3 · F-Gate Convergence</strong><br/>5/5 exact alignment, p &lt; 10⁻³⁰.</div>
+        <div class="card"><strong title="Backlog and triage harmonization index" class="tooltip">C4 · Queue Balance</strong><br/>QZS and QTD latency thresholds.</div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <h2>INNER · INTRA · INTER Architecture</h2>
+      <p>
+        Event schema follows a compact <code>MobiusEvent</code> envelope designed for high-tempo incident routing.
+      </p>
+      <pre><code>type MobiusEvent = {
+  id: string;
+  tier: "INNER" | "INTRA" | "INTER";
+  intent: "plan" | "act" | "verify";
+  contextX: string;
+  tempoY: number;
+  provenanceRef: string;
+};</code></pre>
+      <p>
+        Hardware compatibility includes C80-style comparison templates for emergency compute portability.
+      </p>
+    </section>
+
+    <section id="queues">
+      <h2>Queue Systems + Autofill Links</h2>
+      <div class="grid">
+        <div class="card"><strong>answers</strong><br/>Initial intake, voice-to-ticket conversion.</div>
+        <div class="card"><strong>QZS</strong><br/>Zero-state triage and readiness scoring.</div>
+        <div class="card"><strong>QTD</strong><br/>Task distribution by skill + role filter.</div>
+        <div class="card"><strong>QDT</strong><br/>Delivery tracking and telemetry closeout.</div>
+      </div>
+      <p>Quick-open hyperlinks for drill and campaign operations:</p>
+      <div class="autofill">
+        <a href="https://example.com/gsoc/intake" target="_blank" rel="noreferrer">GSOC Intake</a>
+        <a href="https://example.com/ahj/drill" target="_blank" rel="noreferrer">AHJ Drill Board</a>
+        <a href="https://example.com/teamAET/overlay" target="_blank" rel="noreferrer">teamAET Overlay</a>
+        <a href="https://example.com/floodwater/provenance" target="_blank" rel="noreferrer">Provenance Ledger</a>
+      </div>
+    </section>
+
+    <section id="agents">
+      <h2>Agent Action Economy</h2>
+      <ul>
+        <li><strong>Action:</strong> Execute primary runbook step.</li>
+        <li><strong>Bonus Action:</strong> Trigger automation assist for data prep.</li>
+        <li><strong>Reaction:</strong> Handle interrupts, alerts, and incident escalations.</li>
+      </ul>
+      <p>
+        Loop model: <span class="kbd">Plan</span> → <span class="kbd">Act</span> → <span class="kbd">Verify</span>.
+      </p>
+    </section>
+
+    <section id="deploy">
+      <h2>Deployment and Service Surface</h2>
+      <p>
+        Backend service bands occupy ports <code>8000-9000</code>. Domain cards can be added as endpoint chips with DNS warning states.
+      </p>
+      <pre><code># one-command bootstrap (example)
+./bootstrap.sh --profile drill --ports 8000-9000 --validate</code></pre>
+    </section>
+
+    <section id="marketing">
+      <h2>Marketing-Layer Documentation</h2>
+      <p>
+        Build campaign-ready narratives directly from incident truth data:
+        <a class="link" href="https://example.com/docs/campaign-playbook" target="_blank" rel="noreferrer">Campaign Playbook</a>,
+        <a class="link" href="https://example.com/docs/stakeholder-brief" target="_blank" rel="noreferrer">Stakeholder Brief</a>,
+        <a class="link" href="https://example.com/docs/public-safety-faq" target="_blank" rel="noreferrer">Public Safety FAQ</a>.
+      </p>
+      <p>
+        <strong>Review note:</strong> AI-generated drafts can contain mistakes; verify operational claims before publication.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
