@@ -12,3 +12,4 @@ Open the HTML documentation in a browser:
 ```bash
 xdg-open docs/hypermetadynamic-unified-overlay.html
 ```
+
