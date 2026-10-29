@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doinbetter.example/schemas/artifact-event.schema.json",
+  "title": "Artifact Service Event Envelope",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_type",
+    "timestamp",
+    "actor",
+    "artifact_id",
+    "source_hash",
+    "tofar"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^[a-z]+_[A-Za-z0-9._-]+$"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "artifact.received",
+        "artifact.indexed",
+        "artifact.guarded",
+        "artifact.render.requested",
+        "artifact.rendered",
+        "artifact.published",
+        "artifact.archived",
+        "artifact.retired",
+        "artifact.quarantined",
+        "cred.minted",
+        "tofar.appended",
+        "guard.dark_pattern",
+        "bubble.announced"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "user",
+            "agent",
+            "service",
+            "system"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "artifact_id": {
+      "type": "string"
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-fA-F0-9]{64}$"
+    },
+    "content_hash": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^sha256:[a-fA-F0-9]{64}$"
+    },
+    "lane": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "VOCAB",
+          "CONST",
+          "GATE",
+          "FLOW",
+          "ARCH",
+          "GEO",
+          "HUD",
+          "META"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "artifact_type": {
+      "enum": [
+        "spec",
+        "document",
+        "web_artifact",
+        "canvas",
+        "theme",
+        "gif",
+        "mcp_server",
+        "workflow",
+        "skill",
+        "dataset",
+        "ledger_report",
+        "dashboard",
+        "other"
+      ]
+    },
+    "guard": {
+      "type": "object",
+      "required": [
+        "decision",
+        "trust_score"
+      ],
+      "properties": {
+        "decision": {
+          "enum": [
+            "allow",
+            "revise",
+            "deny",
+            "quarantine"
+          ]
+        },
+        "trust_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "coherence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "tofar": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "parent_record_ids",
+        "payload_hash"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string"
+        },
+        "parent_record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "payload_hash": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "merkle_root": {
+          "type": "string"
+        },
+        "heartbeat_hz": {
+          "type": "number",
+          "default": 4.6
+        }
+      },
+      "additionalProperties": true
+    },
+    "cred": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "tx_id": {
+          "type": "string"
+        },
+        "account_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number"
+        },
+        "split": {
+          "type": "object",
+          "properties": {
+            "INNER": {
+              "type": "number"
+            },
+            "INTRA": {
+              "type": "number"
+            },
+            "INTER": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "bubble": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "level": {
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

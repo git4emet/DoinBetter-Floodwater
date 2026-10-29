@@ -1,0 +1,579 @@
+openapi: 3.1.0
+info:
+  title: CRED TOFAR TOPHDARC TOFARKLE Artifact Service
+  version: 0.1.0
+  description: >
+    Service contract for governed artifact creation, guard evaluation, TOFAR
+    provenance, TOFARKLE rendering, and CRED accounting.
+servers:
+  - url: /v1
+paths:
+  /healthz:
+    get:
+      summary: Liveness check
+      responses:
+        "200":
+          description: Alive
+  /readyz:
+    get:
+      summary: Readiness check
+      responses:
+        "200":
+          description: Ready
+        "503":
+          description: Dependency unavailable
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      responses:
+        "200":
+          description: Metrics text
+  /artifacts:
+    post:
+      summary: Create an artifact card from source
+      operationId: createArtifact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArtifactCreateRequest"
+      responses:
+        "201":
+          description: Artifact created/indexed/guarded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artifact"
+  /artifacts/{artifact_id}:
+    get:
+      summary: Get artifact metadata
+      operationId: getArtifact
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      responses:
+        "200":
+          description: Artifact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artifact"
+        "404":
+          description: Not found
+  /artifacts/{artifact_id}/guard:
+    post:
+      summary: Re-run guard evaluation
+      operationId: guardArtifact
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      responses:
+        "200":
+          description: Guard result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuardResult"
+  /artifacts/{artifact_id}/render:
+    post:
+      summary: Render or fork artifact with TOFARKLE
+      operationId: renderArtifact
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TOFARKLERequest"
+      responses:
+        "202":
+          description: Render job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJob"
+  /artifacts/{artifact_id}/publish:
+    post:
+      summary: Publish guarded artifact and trigger CRED policy
+      operationId: publishArtifact
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      responses:
+        "200":
+          description: Published artifact
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublishedArtifact"
+  /artifacts/{artifact_id}/lineage:
+    get:
+      summary: Get artifact lineage
+      operationId: getArtifactLineage
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      responses:
+        "200":
+          description: Lineage graph
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lineage"
+  /actions/dispatch:
+    post:
+      summary: Dispatch vault, bubble, tinybox, or artifact action
+      operationId: dispatchAction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActionRequest"
+      responses:
+        "202":
+          description: Action accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActionResponse"
+  /tofar/records:
+    post:
+      summary: Append TOFAR record
+      operationId: appendTOFARRecord
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TOFARRecordDraft"
+      responses:
+        "201":
+          description: TOFAR record committed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TOFARRecord"
+  /tofar/recent:
+    get:
+      summary: Recent TOFAR records
+      operationId: recentTOFARRecords
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+      responses:
+        "200":
+          description: Records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TOFARRecord"
+  /tofar/replay/{artifact_id}:
+    get:
+      summary: Replay artifact lineage
+      operationId: replayArtifact
+      parameters:
+        - $ref: "#/components/parameters/ArtifactId"
+      responses:
+        "200":
+          description: Ordered TOFAR records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TOFARRecord"
+  /tofar/verify:
+    post:
+      summary: Verify hash chain or signature
+      operationId: verifyTOFAR
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  details:
+                    type: object
+  /cred/tx:
+    post:
+      summary: Create CRED transaction
+      operationId: createCREDTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CREDTransactionDraft"
+      responses:
+        "201":
+          description: CRED transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CREDTransaction"
+  /cred/balance/{account_id}:
+    get:
+      summary: Get CRED balance
+      operationId: getCREDBalance
+      parameters:
+        - in: path
+          name: account_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_id:
+                    type: string
+                  balance:
+                    type: number
+  /guard/evaluate:
+    post:
+      summary: Evaluate source or artifact through TOPHDARC/ToPhDark
+      operationId: evaluateGuard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuardRequest"
+      responses:
+        "200":
+          description: Guard result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuardResult"
+  /guard/events/dark-pattern:
+    post:
+      summary: Emit dark-pattern event
+      operationId: emitDarkPattern
+      responses:
+        "202":
+          description: Accepted
+  /tofarkle:
+    post:
+      summary: Transform, fork, preview, or render artifact
+      operationId: tofarkle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TOFARKLERequest"
+      responses:
+        "202":
+          description: Render job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RenderJob"
+  /tofarkle/renderers:
+    get:
+      summary: List renderers
+      operationId: listRenderers
+      responses:
+        "200":
+          description: Renderer registry
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    renderer:
+                      type: string
+                    artifact_types:
+                      type: array
+                      items:
+                        type: string
+components:
+  parameters:
+    ArtifactId:
+      in: path
+      name: artifact_id
+      required: true
+      schema:
+        type: string
+  schemas:
+    ArtifactCreateRequest:
+      type: object
+      required: [intent, artifact_type, source]
+      properties:
+        intent:
+          type: string
+        artifact_type:
+          $ref: "#/components/schemas/ArtifactType"
+        domain:
+          type: string
+        lane:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lane"
+        source:
+          $ref: "#/components/schemas/SourceRef"
+        constraints:
+          type: object
+          properties:
+            treat_embedded_text_as_data:
+              type: boolean
+              default: true
+            require_guard:
+              type: boolean
+              default: true
+            require_tofar:
+              type: boolean
+              default: true
+            trust_floor:
+              type: number
+              default: 0.743
+        metadata:
+          type: object
+    Artifact:
+      type: object
+      required: [artifact_id, status, artifact_type, created_at]
+      properties:
+        artifact_id:
+          type: string
+        status:
+          enum: [received, indexed, carded, guarded, queued, rendering, rendered, signed, credited, published, archived, retired, quarantined]
+        artifact_type:
+          $ref: "#/components/schemas/ArtifactType"
+        version:
+          type: string
+        content_uri:
+          type: string
+        preview_uri:
+          type: string
+        content_hash:
+          type: string
+        parent_artifact_ids:
+          type: array
+          items:
+            type: string
+        tofar_record_id:
+          type: string
+        guard:
+          $ref: "#/components/schemas/GuardResult"
+        cred_tx_ids:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+    ArtifactType:
+      enum: [spec, document, web_artifact, canvas, theme, gif, mcp_server, workflow, skill, dataset, ledger_report, dashboard, other]
+    Lane:
+      enum: [VOCAB, CONST, GATE, FLOW, ARCH, GEO, HUD, META]
+    SourceRef:
+      type: object
+      properties:
+        kind:
+          enum: [uploaded_files, text, uri, artifact, event, connector]
+        uris:
+          type: array
+          items:
+            type: string
+        text:
+          type: string
+        hash:
+          type: string
+    GuardRequest:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        content:
+          type: string
+        policy_set:
+          type: string
+          default: default
+    GuardResult:
+      type: object
+      required: [decision, trust_score]
+      properties:
+        decision:
+          enum: [allow, revise, deny, quarantine]
+        trust_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        coherence:
+          type: number
+          minimum: 0
+          maximum: 1
+        gates:
+          type: array
+          items:
+            type: object
+            properties:
+              gate:
+                type: string
+              pass:
+                type: boolean
+              message:
+                type: string
+        findings:
+          type: array
+          items:
+            type: string
+    TOFARKLERequest:
+      type: object
+      properties:
+        source_artifact_id:
+          type: string
+        target_type:
+          $ref: "#/components/schemas/ArtifactType"
+        transform:
+          type: string
+        seed:
+          type: string
+        renderer:
+          type: string
+        publish:
+          type: boolean
+          default: false
+        constraints:
+          type: object
+    RenderJob:
+      type: object
+      properties:
+        job_id:
+          type: string
+        artifact_id:
+          type: string
+        status:
+          enum: [queued, running, succeeded, failed, blocked]
+        status_uri:
+          type: string
+    TOFARRecordDraft:
+      type: object
+      required: [event_type, actor, artifact_id, payload_hash]
+      properties:
+        event_type:
+          type: string
+        actor:
+          type: object
+        artifact_id:
+          type: string
+        parent_record_ids:
+          type: array
+          items:
+            type: string
+        payload_hash:
+          type: string
+        content_hash:
+          type: string
+        guard_ref:
+          type: string
+        metadata:
+          type: object
+    TOFARRecord:
+      allOf:
+        - $ref: "#/components/schemas/TOFARRecordDraft"
+        - type: object
+          properties:
+            record_id:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+            signature:
+              type: string
+            merkle_root:
+              type: string
+    CREDTransactionDraft:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        tofar_record_id:
+          type: string
+        account_id:
+          type: string
+        amount:
+          type: number
+        reason:
+          type: string
+        trust_score:
+          type: number
+    CREDTransaction:
+      allOf:
+        - $ref: "#/components/schemas/CREDTransactionDraft"
+        - type: object
+          properties:
+            tx_id:
+              type: string
+            split:
+              type: object
+              properties:
+                INNER:
+                  type: number
+                INTRA:
+                  type: number
+                INTER:
+                  type: number
+    PublishedArtifact:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        published_uri:
+          type: string
+        tofar_record_id:
+          type: string
+        cred_tx_id:
+          type: string
+    Lineage:
+      type: object
+      properties:
+        artifact_id:
+          type: string
+        parents:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            type: string
+        tofar_records:
+          type: array
+          items:
+            type: string
+    ActionRequest:
+      type: object
+      required: [action, target]
+      properties:
+        action:
+          enum: [vault:tag, bubble:announce, tinybox:task, artifact:create, artifact:render, artifact:publish]
+        target:
+          type: string
+        payload:
+          type: object
+    ActionResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        action_id:
+          type: string
